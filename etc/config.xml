@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <admin>
+            <backend_google_sso>
+                <status>0</status>
+                <auto_register_status>0</auto_register_status>
+                <auto_register_default_locale>en_US</auto_register_default_locale>
+                <auto_register_default_role>1</auto_register_default_role>
+            </backend_google_sso>
+        </admin>
+    </default>
+</config>

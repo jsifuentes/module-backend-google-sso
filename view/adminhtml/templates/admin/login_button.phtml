@@ -1,0 +1,16 @@
+<?php
+/** @var \Sifuen\BackendGoogleSso\Block\Adminhtml\Login $block */
+?>
+<div class="actions">
+    <button
+        <?php $block->getUiId(); ?>
+            class="action-login action-primary">
+        <span><?php /* @escapeNotVerified */ echo __('Sign in')?></span>
+    </button>
+
+    <?php if ($block->isModuleConfigured()): ?>
+    <a id="google-sign-in-btn" href="<?php echo $block->getSignInUrl(); ?>" title="Sign in with Google">
+        <img src="<?php echo $this->getViewFileUrl('Sifuen_BackendGoogleSso::images/btn_google_signin_dark_normal_web.png'); ?>" />
+    </a>
+    <?php endif; ?>
+</div>

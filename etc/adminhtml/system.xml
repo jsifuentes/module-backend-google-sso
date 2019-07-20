@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="admin">
+            <group id="backend_google_sso" type="text" translate="label comment" showInDefault="1">
+                <label>Google SSO</label>
+
+                <field id="status" type="select" translate="label comment" sortOrder="10" showInDefault="1">
+                    <label>Status</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                </field>
+
+                <field id="client_id" type="text" translate="label comment" sortOrder="20" showInDefault="1">
+                    <label>Client ID</label>
+                    <comment><![CDATA[Enter your Google App ID. To generate your keys, visit the <a href="https://console.developers.google.com/" target="_blank">Google Developer Console</a>.]]></comment>
+                </field>
+
+                <field id="client_secret" type="obscure" translate="label comment" sortOrder="30" showInDefault="1">
+                    <label>Client Secret</label>
+                    <comment><![CDATA[Enter your Google App Secret To generate your keys, visit the <a href="https://console.developers.google.com/" target="_blank">Google Developer Console</a>.]]></comment>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+
+                <field id="auto_register_status" type="select" translate="label comment" sortOrder="40" showInDefault="1">
+                    <label>Auto Register Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <comment><![CDATA[
+                        This feature allows users who own e-mail addresses that are associated with this store to automatically
+                        have an account created for them.
+                    ]]></comment>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                    </depends>
+                </field>
+
+                <field id="auto_register_default_locale" type="select" translate="label comment" sortOrder="50" showInDefault="1">
+                    <label>New User Locale</label>
+                    <comment><![CDATA[All new user's locale will be set to this.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Locale</source_model>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
+                    </depends>
+                </field>
+
+                <field id="auto_register_default_role" type="select" translate="label comment" sortOrder="60" showInDefault="1">
+                    <label>New User Role</label>
+                    <comment><![CDATA[All new user's role will be set to this.]]></comment>
+                    <source_model>Sifuen\BackendGoogleSso\Model\Config\Source\Roles</source_model>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
+                    </depends>
+                </field>
+
+                <field id="auto_register_email_matching_system" type="select" translate="label comment" sortOrder="70" showInDefault="1">
+                    <label>E-mail matching system</label>
+                    <comment><![CDATA[
+                        This determines what system is used to match e-mail addresses to auto-register. Keep in mind,
+                        this is not a list of users who can use "Sign in with Google".<br />
+                        <strong>Any e-mail address in a domain</strong> allows you to match all e-mail accounts
+                            associated with a domain name. For example, if you allow e-mails from "google.com" to be
+                            auto registered, e-mails such as "one@google.com" will be auto-registered, but e-mails from
+                            "gmail.com" will be rejected.<br />
+                        <strong>Specific e-mail addresses</strong> allows you to list out e-mail addresses that are
+                            allowed to auto-register.<br />
+                        <strong>Regular Expression</strong> allows you to use regular expressions to match e-mail
+                            addresses. This should only be used by advanced users. Be careful making your expression
+                            too open, because it could allow unintended users to sign in to your Magento backend.
+                    ]]></comment>
+                    <source_model>Sifuen\BackendGoogleSso\Model\Config\Source\EmailMatchingSystem</source_model>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
+                    </depends>
+                </field>
+
+                <field id="auto_register_email_matching_system_domain_list" type="text" translate="label comment" sortOrder="80" showInDefault="1">
+                    <label>List of allowed e-mail domains</label>
+                    <frontend_model>Sifuen\BackendGoogleSso\Block\Adminhtml\Form\Field\ItemList</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[
+                        A list of e-mail domains allowed to be auto-registered such as "google.com" or "sifuen.com"
+                    ]]></comment>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_email_matching_system">in_domain</field>
+                    </depends>
+                </field>
+
+                <field id="auto_register_email_matching_system_emails_list" type="text" translate="label comment" sortOrder="90" showInDefault="1">
+                    <label>List of allowed e-mails</label>
+                    <frontend_model>Sifuen\BackendGoogleSso\Block\Adminhtml\Form\Field\ItemList</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[
+                        A list of e-mail addresses allowed to be auto-registered such as "jacob@sifuen.com"
+                    ]]></comment>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_email_matching_system">in_list</field>
+                    </depends>
+                </field>
+
+                <field id="auto_register_email_matching_system_regex" type="text" translate="label comment" sortOrder="100" showInDefault="1">
+                    <label>Allowed e-mails regular expression</label>
+                    <comment><![CDATA[
+                        <strong>Danger!</strong> Only use this matching system if you are comfortable creating regular
+                            expressions. Creating a regular expression that is too open could allow unintended users to
+                            login to your Magento backend.
+                    ]]></comment>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_email_matching_system">regex</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

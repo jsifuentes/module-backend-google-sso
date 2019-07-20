@@ -1,0 +1,32 @@
+{
+  "name": "sifuen/module-backend-google-sso",
+  "type": "magento2-module",
+  "version": "1.0.1",
+  "description": "Sign in to your Magento 2 admin panel using your Google account",
+  "license": "MIT",
+  "keywords": [
+    "magento 2",
+    "google",
+    "sso",
+    "admin",
+    "backend"
+  ],
+  "authors": [
+    {
+      "name": "Jacob Sifuentes",
+      "email": "jacob@sifuen.com"
+    }
+  ],
+  "require": {
+    "php": "5.5.*|5.6.*|7.0.*|7.1.*",
+    "league/oauth2-google": "^2.2"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Sifuen\\BackendGoogleSso\\": ""
+    }
+  }
+}
