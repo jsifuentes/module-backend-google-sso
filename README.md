@@ -82,6 +82,25 @@ This can also be toggled on a per-user basis, even if the user was not originall
 
 ![2](https://i.imgur.com/6fr3ZcW.png)
 
+
+# Concerns
+
+**I want to know when my employees are logging in or auto-registering**
+
+All login actions using Google SSO are logged to the table `google_sso_action_log` in the database. The following actions are logged:
+
+* When a user logs in via Google SSO
+* When a user attempts to login using Google SSO, but is denied access
+* When a user is auto-registered via Google SSO
+* When a user attempts to use password authentication when password authentication is disabled.
+
+**I don't want my employees to be able to access their admin accounts when they leave the company**
+
+You can disable the ability for an admin user to use password authentication, which forces them to use Google SSO to sign in.
+Once an employee's work e-mail is revoked, they will no longer be able to access their admin account. If the employee even attempts
+to sign into their account using password authentication, that action is logged in the `google_sso_action_log` table
+
+
 # Contributing
 
 Please refer to [CONTRIBUTING.md](CONTRIBUTING.md)
