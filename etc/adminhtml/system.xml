@@ -45,6 +45,7 @@
 
                     <depends>
                         <field id="admin/backend_google_sso/status">1</field>
+                        <field id="admin/backend_google_sso/auto_register_status">1</field>
                     </depends>
                 </field>
 

@@ -2,6 +2,8 @@
 
 This Magento 2 module allows you to sign in to your backend user account using your Google account. You can also have backend accounts created automatically when someone logs in with their Google account.
 
+https://sifuen.com/magento-2/using-google-account-sign-in-magento-backend/
+
 # Requirements
 
 This module requires the following:
@@ -49,7 +51,7 @@ Magento 2 administrator page.
 
 ## Configuring the module
 
-![1](https://i.imgur.com/fsP8iOp.png)
+![1](https://i.imgur.com/26ird7f.png)
 
 After you set up your OAuth 2 credentials, login to your Magento backend and navigate to **Stores > Configuration > Advanced > Admin > Google SSO**.
 
@@ -60,16 +62,25 @@ After you set up your OAuth 2 credentials, login to your Magento backend and nav
 
 After your configuration saves, clear your store's cache if necessary. The next time you visit the Magento 2 backend login page, you should see a button to `Sign in with Google`.
 
-
 ### Auto Registration
 
 You can enable "Auto Registration" which allows users with access to certain Google accounts to automatically have admin accounts created for them. This is especially useful for agencies who have multiple employees logging into a client's admin. 
 
-You have the following available options:
+You have the following available filter options:
 
 * Only allowing specific e-mails
 * Allowing any e-mails in a domain
 * Allowing any e-mails that match a regular expression
+
+
+### Disabling password authentication
+
+You can disable the ability for a user to login to their admin account using a password automatically if they are registered using Google SSO by toggling the setting "Allow Auto-Registered Users To Use Password Login".
+This is especially useful if you are in an work environment where when an employee loses their work e-mail, they should no longer be allowed to access client admin accounts.
+
+This can also be toggled on a per-user basis, even if the user was not originally created using the auto-register feature.
+
+![2](https://i.imgur.com/6fr3ZcW.png)
 
 # Contributing
 
