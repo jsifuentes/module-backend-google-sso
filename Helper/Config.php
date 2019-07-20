@@ -17,6 +17,7 @@ class Config extends AbstractHelper
     const XML_BACKEND_GOOGLE_SSO_CLIENT_ID = 'admin/backend_google_sso/client_id';
     const XML_BACKEND_GOOGLE_SSO_CLIENT_SECRET = 'admin/backend_google_sso/client_secret';
     const XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_STATUS = 'admin/backend_google_sso/auto_register_status';
+    const XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_ALLOW_PASSWORD_LOGIN = 'admin/backend_google_sso/auto_register_allow_password_login';
     const XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_DEFAULT_LOCALE = 'admin/backend_google_sso/auto_register_default_locale';
     const XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_DEFAULT_ROLE = 'admin/backend_google_sso/auto_register_default_role';
     const XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_EMAIL_MATCHING_SYSTEM = 'admin/backend_google_sso/auto_register_email_matching_system';
@@ -104,6 +105,22 @@ class Config extends AbstractHelper
     }
 
     /**
+     * @return bool
+     */
+    public function isAutoRegisterActive()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_STATUS);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canAutoRegisteredUsersUsePasswordLogin()
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_ALLOW_PASSWORD_LOGIN);
+    }
+
+    /**
      * @return string
      */
     public function getDefaultLocale()
@@ -117,14 +134,6 @@ class Config extends AbstractHelper
     public function getDefaultRole()
     {
         return $this->scopeConfig->getValue(self::XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_DEFAULT_ROLE);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAutoRegisterActive()
-    {
-        return !!$this->scopeConfig->getValue(self::XML_BACKEND_GOOGLE_SSO_AUTO_REGISTER_STATUS);
     }
 
     /**

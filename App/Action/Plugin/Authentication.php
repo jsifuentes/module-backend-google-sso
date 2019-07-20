@@ -12,6 +12,8 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Data\Form\FormKey\Validator;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\User\Model\UserFactory;
+use Sifuen\BackendGoogleSso\Helper\ActionLogger;
 use Sifuen\BackendGoogleSso\Helper\Config;
 
 /**
@@ -24,6 +26,14 @@ class Authentication extends \Magento\Backend\App\Action\Plugin\Authentication
      * @var Config
      */
     protected $configHelper;
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+    /**
+     * @var ActionLogger
+     */
+    private $actionLogger;
 
     /**
      * Authentication constructor.
@@ -37,6 +47,8 @@ class Authentication extends \Magento\Backend\App\Action\Plugin\Authentication
      * @param BackendAppList $backendAppList
      * @param Validator $formKeyValidator
      * @param Config $configHelper
+     * @param UserFactory $userFactory
+     * @param ActionLogger $actionLogger
      */
     public function __construct(
         Auth $auth,
@@ -48,7 +60,9 @@ class Authentication extends \Magento\Backend\App\Action\Plugin\Authentication
         RedirectFactory $resultRedirectFactory,
         BackendAppList $backendAppList,
         Validator $formKeyValidator,
-        Config $configHelper
+        Config $configHelper,
+        UserFactory $userFactory,
+        ActionLogger $actionLogger
     )
     {
         parent::__construct(
@@ -57,6 +71,8 @@ class Authentication extends \Magento\Backend\App\Action\Plugin\Authentication
         );
 
         $this->configHelper = $configHelper;
+        $this->userFactory = $userFactory;
+        $this->actionLogger = $actionLogger;
     }
 
     /**
@@ -76,5 +92,33 @@ class Authentication extends \Magento\Backend\App\Action\Plugin\Authentication
         }
 
         return parent::aroundDispatch($subject, $proceed, $request);
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return bool
+     */
+    protected function _performLogin(RequestInterface $request)
+    {
+        $postLogin = $request->getPost('login');
+        $username = isset($postLogin['username']) ? $postLogin['username'] : '';
+
+        $user = $this->userFactory->create();
+        $user->loadByUsername($username);
+
+        if ($user->getId() && !$user->getData('can_use_password_authentication')) {
+            $this->actionLogger->create(__(
+                "User '%1' tried to login with a password, but password authentication is disabled.",
+                $user->getUserName()
+            ), $user->getId());
+
+            $this->messageManager->addErrorMessage(__(
+                'You cannot login to this admin account using a password because password authentication is disabled.'
+            ));
+            $request->setParam('messageSent', true);
+            return false;
+        }
+
+        return parent::_performLogin($request);
     }
 }

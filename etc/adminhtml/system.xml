@@ -34,6 +34,20 @@
                     </depends>
                 </field>
 
+                <field id="auto_register_allow_password_login" type="select" translate="label comment" sortOrder="45" showInDefault="1">
+                    <label>Allow Auto-Registered Users To Use Password Login</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <comment><![CDATA[
+                        If a user has auto-registered using their Google account, this setting can prevent them from using
+                        the password login from accessing their account. This setting is especially useful in work environments
+                        where an ex-employee should no longer be able to access the admin after their work account is revoked.
+                    ]]></comment>
+
+                    <depends>
+                        <field id="admin/backend_google_sso/status">1</field>
+                    </depends>
+                </field>
+
                 <field id="auto_register_default_locale" type="select" translate="label comment" sortOrder="50" showInDefault="1">
                     <label>New User Locale</label>
                     <comment><![CDATA[All new user's locale will be set to this.]]></comment>

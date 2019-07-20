@@ -11,4 +11,8 @@
     <type name="Magento\User\Model\User">
         <plugin name="Sifuen_BackendGoogleSso::authenticate" type="Sifuen\BackendGoogleSso\Plugin\Magento\User\Model\User" />
     </type>
+
+    <type name="\Magento\User\Block\User\Edit\Tab\Main">
+        <plugin name="Sifuen_BackendGoogleSso::add_pw_auth_field" type="Sifuen\BackendGoogleSso\Plugin\Magento\User\Block\User\Edit\Tab\Main" />
+    </type>
 </config>

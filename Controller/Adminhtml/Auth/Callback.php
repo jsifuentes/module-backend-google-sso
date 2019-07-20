@@ -4,6 +4,7 @@ namespace Sifuen\BackendGoogleSso\Controller\Adminhtml\Auth;
 
 use League\OAuth2\Client\Provider\GoogleUser;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use League\OAuth2\Client\Token\AccessToken;
 use Magento\Backend\App\AbstractAction;
 use Magento\Backend\App\Action;
 use Magento\Backend\Model\Auth;
@@ -15,6 +16,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Math\Random;
 use Magento\User\Model\User;
 use Magento\User\Model\UserFactory;
+use Sifuen\BackendGoogleSso\Helper\ActionLogger;
 use Sifuen\BackendGoogleSso\Helper\Config;
 use Sifuen\BackendGoogleSso\Helper\EmailMatching;
 use Sifuen\BackendGoogleSso\Helper\Google;
@@ -81,6 +83,10 @@ class Callback extends AbstractAction
      * @var Auth\Session
      */
     protected $authSession;
+    /**
+     * @var ActionLogger
+     */
+    private $actionLogger;
 
     /**
      * Callback constructor.
@@ -95,6 +101,7 @@ class Callback extends AbstractAction
      * @param AuthenticationStrategy $authenticationStrategy
      * @param EmailMatching $emailMatchingHelper
      * @param Auth\Session $authSession
+     * @param ActionLogger $actionLogger
      */
     public function __construct(
         Action\Context $context,
@@ -107,7 +114,8 @@ class Callback extends AbstractAction
         ModelFactory $modelFactory,
         AuthenticationStrategy $authenticationStrategy,
         EmailMatching $emailMatchingHelper,
-        Auth\Session $authSession
+        Auth\Session $authSession,
+        ActionLogger $actionLogger
     )
     {
         parent::__construct($context);
@@ -122,6 +130,7 @@ class Callback extends AbstractAction
         $this->authenticationStrategy = $authenticationStrategy;
         $this->emailMatchingHelper = $emailMatchingHelper;
         $this->authSession = $authSession;
+        $this->actionLogger = $actionLogger;
     }
 
     /**
@@ -156,6 +165,11 @@ class Callback extends AbstractAction
                 if ($this->configHelper->isAutoRegisterActive() && $this->emailMatchingHelper->isEmailAllowed($owner->getEmail())) {
                     $this->createNewAdminUser($owner);
                     $this->attemptSignIn($owner);
+                } else {
+                    $this->actionLogger->create(__(
+                        'Received a login attempt from %1, but they were denied access',
+                        $owner->getEmail()
+                    ));
                 }
             }
 
@@ -170,7 +184,7 @@ class Callback extends AbstractAction
             return $this->redirectToLogin();
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(__("An error occurred while signing you in. Please try again later."));
-            $this->logger->critical("Error while attempting to sign a user in via Google SSO.", ['e' => $e]);
+            $this->logger->critical("[Google SSO] Error while attempting to sign a user in via Google SSO.", ['e' => $e]);
 
             // Redirect back to login page.
             return $this->redirectToLogin();
@@ -196,6 +210,7 @@ class Callback extends AbstractAction
     /**
      * @param $code
      * @return ResourceOwnerInterface
+     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
      */
     protected function getOwnerFromCode($code)
     {
@@ -205,6 +220,7 @@ class Callback extends AbstractAction
             ]
         ]);
 
+        /** @var AccessToken $token */
         $token = $provider->getAccessToken('authorization_code', [
             'code' => $code
         ]);
@@ -232,6 +248,11 @@ class Callback extends AbstractAction
         $this->authenticationStrategy->setStrategy(AuthenticationStrategy::GOOGLE_SSO);
         $this->auth->login($owner->getEmail(), "password");
 
+        $this->actionLogger->create(__(
+            'Successfully logged in using email %1',
+            $owner->getEmail()
+        ), $user->getId());
+
         /**
          * This is to take advantage of some native functionality Magento has
          * when a user needs to change their password.
@@ -251,6 +272,11 @@ class Callback extends AbstractAction
     {
         /** @var GoogleUser $owner */
 
+        $email = $owner->getEmail();
+        $firstName = $owner->getFirstName();
+        $lastName = $owner->getLastName();
+        $role = $this->configHelper->getDefaultRole();
+
         /** @var User $user */
         $user = $this->userFactory->create();
 
@@ -261,17 +287,26 @@ class Callback extends AbstractAction
         $password = $this->random->getRandomString(20) . '1';
 
         $user->setData([
-            'username' => $owner->getEmail(),
-            'email' => $owner->getEmail(),
-            'firstname' => $owner->getFirstName(),
-            'lastname' => $owner->getLastName(),
+            'username' => $email,
+            'email' => $email,
+            'firstname' => $firstName,
+            'lastname' => $lastName,
             'password' => $password,
             'interface_locale' => $this->configHelper->getDefaultLocale(),
             'is_active' => 1,
-            'role_id' => $this->configHelper->getDefaultRole(),
-            'needs_to_set_password' => 1
+            'role_id' => $role,
+            'needs_to_set_password' => 1,
+            'created_by_google_sso' => 1,
+            'can_use_password_authentication' => (int)$this->configHelper->canAutoRegisteredUsersUsePasswordLogin()
         ]);
 
         $user->save();
+
+        $this->actionLogger->create(__(
+            "Created an admin account for %1 (%2) and assigned them to role '%3'",
+            $user->getEmail(),
+            $user->getName(),
+            $user->getRole()->getRoleName()
+        ), $user->getId());
     }
 }
