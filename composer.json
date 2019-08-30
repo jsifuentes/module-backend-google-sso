@@ -1,7 +1,6 @@
 {
   "name": "sifuen/module-backend-google-sso",
   "type": "magento2-module",
-  "version": "1.0.1",
   "description": "Sign in to your Magento 2 admin panel using your Google account",
   "license": "MIT",
   "keywords": [
