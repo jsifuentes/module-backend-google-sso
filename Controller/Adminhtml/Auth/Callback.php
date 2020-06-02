@@ -284,7 +284,7 @@ class Callback extends AbstractAction
          * The '1' at the end of the password is just to satisfy
          * the need for both alphabetic and numeric characters.
          */
-        $password = $this->random->getRandomString(20) . '1';
+        $password = $this->random->getRandomString(20) . '1!';
 
         $user->setData([
             'username' => $email,
