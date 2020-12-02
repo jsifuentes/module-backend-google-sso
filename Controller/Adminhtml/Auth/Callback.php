@@ -246,7 +246,7 @@ class Callback extends AbstractAction
         }
 
         $this->authenticationStrategy->setStrategy(AuthenticationStrategy::GOOGLE_SSO);
-        $this->auth->login($owner->getEmail(), "password");
+        $this->auth->login($owner->getEmail(), "Pass1023word!"); // fake string to pass validation
 
         $this->actionLogger->create(__(
             'Successfully logged in using email %1',
