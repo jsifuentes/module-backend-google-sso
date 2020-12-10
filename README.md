@@ -40,7 +40,7 @@ php bin/magento setup:upgrade
 ```
 bin/magento config:set admin/backend_google_sso/status 1
 bin/magento config:set admin/backend_google_sso/client_id "Google client id"
-bin/magento config:set admin/backend_google_sso/client_secret "Google secret key"
+bin/magento config:set admin/backend_google_sso/client_secret "Google secret key" --lock-env
 ```
 
 ## Setting up your OAuth credentials
