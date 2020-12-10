@@ -36,6 +36,13 @@ php bin/magento setup:upgrade
 
 # Set up
 
+## Command Line
+```
+bin/magento config:set admin/backend_google_sso/status 1
+bin/magento config:set admin/backend_google_sso/client_id "Google client id"
+bin/magento config:set admin/backend_google_sso/client_secret "Google secret key"
+```
+
 ## Setting up your OAuth credentials
 
 Visit the [Google Developer Console](https://console.developers.google.com/) to create your OAuth credentials.
